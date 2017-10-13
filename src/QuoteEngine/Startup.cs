@@ -35,6 +35,7 @@ namespace QuoteEngine
             services.AddSingleton<ICommandRA>(persistence);
 
             services.AddScoped<IHandleMessage, MessageHandler>();
+            services.AddScoped<IPublishMessage, MessagePublisher>();
             services.AddScoped<IProcessMessage, MessageProcessor>();
             services.AddScoped<IRegisterMessageHandler, RegisterMessageHandler>();
             services.AddMvc();
