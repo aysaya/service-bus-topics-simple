@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+*.user
+*.sln
+
+/src/RateWebhook/obj
+/src/RateWebhook/bin
+
+/src/QuoteEngine/obj
+/src/QuoteEngine/bin
