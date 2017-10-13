@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using QuoteEngine.ResourceAccessors;
 using BasicQueueSender.MessageHandlers;
+using QuoteEngine.MessageHandlers;
 
 namespace QuoteEngine
 {
@@ -27,10 +23,11 @@ namespace QuoteEngine
         {
             var connectionString = Configuration["simple-bus-connection"];
             var queueName = Configuration["simple-queue-name"];
+            var topicName = Configuration["simple-topic-name"];
 
             services.AddSingleton<IProvideServiceBusConnection>
                 (
-                    new ServiceBusConnectionProvider(connectionString, queueName)
+                    new ServiceBusConnectionProvider(connectionString, queueName, topicName)
                 );
             //implement durable persistence
             var persistence = new MemoryPersistence();
@@ -38,6 +35,7 @@ namespace QuoteEngine
             services.AddSingleton<ICommandRA>(persistence);
 
             services.AddScoped<IHandleMessage, MessageHandler>();
+            services.AddScoped<IProcessMessage, MessageProcessor>();
             services.AddScoped<IRegisterMessageHandler, RegisterMessageHandler>();
             services.AddMvc();
         }

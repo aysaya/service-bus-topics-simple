@@ -1,27 +1,26 @@
-﻿namespace QuoteEngine
+﻿namespace Pricing
 {
     public interface IProvideServiceBusConnection
     {
         string ConnectionString { get;}
-        string QueueName { get; }
         string TopicName { get; }
+        string SubscriptionName { get; }
     }
-
     public class ServiceBusConnectionProvider : IProvideServiceBusConnection
     {
         private readonly string connectionString;
-        private readonly string queueName;
-        private string topicName;
+        private readonly string topicName;
+        private readonly string subscriptionName;
 
-        public ServiceBusConnectionProvider(string connectionString, string queueName, string topicName)
+        public ServiceBusConnectionProvider(string connectionString, string topicName, string subscriptionName)
         {
             this.connectionString = connectionString;
-            this.queueName = queueName;
             this.topicName = topicName;
+            this.subscriptionName = subscriptionName;
         }
 
         public string ConnectionString => connectionString;
-        public string QueueName => queueName;
         public string TopicName => topicName;
+        public string SubscriptionName => subscriptionName;
     }
 }
