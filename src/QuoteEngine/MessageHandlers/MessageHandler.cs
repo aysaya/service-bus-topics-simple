@@ -1,10 +1,8 @@
-﻿using QuoteEngine.ResourceAccessors;
-using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
+﻿using Microsoft.Azure.ServiceBus;
 using System;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using QuoteEngine.MessageHandlers;
 
 namespace BasicQueueSender.MessageHandlers
 {
@@ -13,19 +11,20 @@ namespace BasicQueueSender.MessageHandlers
         Task Handle(Message message, CancellationToken token);
         Task HandleOption(ExceptionReceivedEventArgs arg);
     }
+
     public class MessageHandler : IHandleMessage
     {
-        private readonly ICommandRA commandRA;
+        private IProcessMessage messageProcessor;
 
-        public MessageHandler(ICommandRA commandRA)
+        public MessageHandler(IProcessMessage messageProcessor)
         {
-            this.commandRA = commandRA;
+            this.messageProcessor = messageProcessor;
         }
 
         public async Task Handle(Message message, CancellationToken token)
         {
-            var payload = JsonConvert.DeserializeObject<object>(Encoding.UTF8.GetString(message.Body));
-            await commandRA.SaveAsync(payload);
+            await messageProcessor.ProcessAsync(message);
+            System.Console.WriteLine("Message handled successfully!");
         }
 
         public Task HandleOption(ExceptionReceivedEventArgs arg)

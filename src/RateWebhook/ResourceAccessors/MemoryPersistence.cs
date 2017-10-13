@@ -1,30 +1,30 @@
-﻿using QuoteEngine.DomainModels;
+﻿using RateWebhook.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QuoteEngine.ResourceAccessors
+namespace RateWebhook.ResourceAccessors
 {
     public interface ICommandRA
     {
-        Task SaveAsync(Quote quote);
+        Task SaveAsync(ThirdPartyRate rate);
     }
     public interface IQueryRA
     {
-        Task<Quote[]> GetAllAsync();
+        Task<ThirdPartyRate[]> GetAllAsync();
     }
 
     public class MemoryPersistence : ICommandRA, IQueryRA
     {
-        private static HashSet<Quote> cache = new HashSet<Quote>();
+        private static HashSet<ThirdPartyRate> cache = new HashSet<ThirdPartyRate>();
         
-        public async Task SaveAsync(Quote quote)
+        public async Task SaveAsync(ThirdPartyRate rate)
         {
-            cache.Add(quote);
+            cache.Add(rate);
             await Task.CompletedTask;
         }
 
-        public async Task<Quote[]> GetAllAsync()
+        public async Task<ThirdPartyRate[]> GetAllAsync()
         {
             return await Task.FromResult(cache.ToArray());
         }        

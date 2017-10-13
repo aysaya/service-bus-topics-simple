@@ -1,6 +1,9 @@
 ﻿using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
+using QuoteEngine.DomainModels;
 using QuoteEngine.ResourceAccessors;
+using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,7 +11,7 @@ namespace QuoteEngine.MessageHandlers
 {
     public interface IProcessMessage
     {
-        Task Process(Message message);
+        Task ProcessAsync(Message message);
     }
     public class MessageProcessor : IProcessMessage
     {
@@ -20,10 +23,33 @@ namespace QuoteEngine.MessageHandlers
             this.commandRA = commandRA;
             this.messagePublisher = messagePublisher;
         }
-        public async Task Process(Message message)
+
+        public async Task ProcessAsync(Message message)
         {
-            var payload = JsonConvert.DeserializeObject<object>(Encoding.UTF8.GetString(message.Body));
-            await commandRA.SaveAsync(payload);
+            var quote = AssembleQuote(Encoding.UTF8.GetString(message.Body));
+
+            var saveTask = commandRA.SaveAsync(quote);
+
+            await messagePublisher.Publish(PrepareEventMessage(quote));
+        }
+
+        private Quote AssembleQuote(string payload)
+        {
+            var keyValuePairs = JsonConvert
+                .DeserializeObject<Dictionary<string, string>>(payload);
+
+            return new Quote
+            {
+                Id = Guid.NewGuid(),
+                BaseCurrency = keyValuePairs["BaseCurrency"],
+                TargetCurrency = keyValuePairs["TradeCurrency"],
+                Rate = Convert.ToDouble(keyValuePairs["Rate"])
+            };
+        }
+
+        private string PrepareEventMessage(Quote quote)
+        {
+            return JsonConvert.SerializeObject(quote);
         }
     }
 }

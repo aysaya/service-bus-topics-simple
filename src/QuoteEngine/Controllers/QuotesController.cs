@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using QuoteEngine.ResourceAccessors;
+using QuoteEngine.DomainModels;
 
 namespace QuoteEngine.Controllers
 {
@@ -12,13 +13,11 @@ namespace QuoteEngine.Controllers
         {
             this.queryRa = queryRa;
         }
-        // GET api/values
+
         [HttpGet]
-        public async Task<object[]> Get()
+        public async Task<Quote[]> Get()
         {
             return await queryRa.GetAllAsync();
-        }
-
-        
+        }        
     }
 }

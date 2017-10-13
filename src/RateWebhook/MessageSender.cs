@@ -21,6 +21,7 @@ namespace RateWebhook
             var client = new QueueClient(bus.ConnectionString, bus.QueueName);
             var msg = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message)));
             await client.SendAsync(msg);
+            System.Console.WriteLine("Message sent successfully!");
         }
     }
 }

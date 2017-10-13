@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RateWebhook.Models;
+using RateWebhook.ResourceAccessors;
 
 namespace RateWebhook.Controllers
 {
@@ -7,18 +9,27 @@ namespace RateWebhook.Controllers
     public class ThirdpartyRatesController : Controller
     {
         private readonly ISendMessage sender;
-        public ThirdpartyRatesController(ISendMessage sender)
+        private readonly IQueryRA query;
+        private readonly ICommandRA command;
+
+        public ThirdpartyRatesController(ISendMessage sender, IQueryRA query, ICommandRA command)
         {
             this.sender = sender;
+            this.command = command;
+            this.query = query;
         }
 
         [HttpPost]
-        public async Task Post([FromBody]object value)
+        public async Task Post([FromBody]ThirdPartyRate value)
         {
-            if (string.IsNullOrEmpty(value.ToString()))
-                return;
+            var saveTask = command.SaveAsync(value);
+            await sender.Send(value);
+        }
 
-            await sender.Send(value.ToString());
+        [HttpGet]
+        public async Task<ThirdPartyRate[]> Get()
+        {
+            return await query.GetAllAsync();
         }
     }
 }

@@ -29,10 +29,11 @@ namespace QuoteEngine
                 (
                     new ServiceBusConnectionProvider(connectionString, queueName, topicName)
                 );
-            //implement durable persistence
-            var persistence = new MemoryPersistence();
-            services.AddSingleton<IQueryRA>(persistence);
-            services.AddSingleton<ICommandRA>(persistence);
+
+            //TODO: implement durable persistence
+            var quoteStore = new MemoryPersistence();
+            services.AddSingleton<IQueryRA>(quoteStore);
+            services.AddSingleton<ICommandRA>(quoteStore);
 
             services.AddScoped<IHandleMessage, MessageHandler>();
             services.AddScoped<IPublishMessage, MessagePublisher>();

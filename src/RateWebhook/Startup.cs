@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RateWebhook.ResourceAccessors;
 
 namespace RateWebhook
 {
@@ -24,6 +25,11 @@ namespace RateWebhook
                 (
                     new ServiceBusConnectionProvider(connectionString, queueName)
                 );
+
+            var thirdPartyRatesStore = new MemoryPersistence();
+            services.AddSingleton<IQueryRA>(thirdPartyRatesStore);
+            services.AddSingleton<ICommandRA>(thirdPartyRatesStore);
+
             services.AddScoped<ISendMessage, MessageSender>();
             services.AddMvc();
         }
