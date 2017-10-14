@@ -1,16 +1,23 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Notification.ResourceAccessors;
+using System.Threading.Tasks;
 
 namespace Notification.Controllers
 {
     [Route("api/[controller]")]
     public class NotificationsController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IQueryRA query;
+
+        public NotificationsController(IQueryRA query)
         {
-            return new string[] { "value1", "value2" };
+            this.query = query;
+        }
+
+        [HttpGet]
+        public async Task<Models.Notification[]> Get()
+        {
+            return await query.GetAllAsync();
         }
     }
 }
