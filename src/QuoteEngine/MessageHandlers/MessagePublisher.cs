@@ -1,5 +1,4 @@
 ﻿using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +24,7 @@ namespace QuoteEngine.MessageHandlers
             await client.SendAsync(
                 new Message
                 (
-                    Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message))
+                    Encoding.UTF8.GetBytes(message)
                 ));
             System.Console.WriteLine("Message published successfully!");
         }
